@@ -45,7 +45,7 @@ class Pkgbuild
   end
 
   def package
-    Package.new(parse_pkgbuild.merge({pkgbuild: pkgbuild, files: files}))
+    Package.new(parse_pkgbuild.merge({_id: dir.basename, pkgbuild: pkgbuild, files: files}))
   end
 
   def parse_pkgbuild
@@ -79,7 +79,8 @@ class Pkgbuild
       end
       [s,q]
     end
-    st.first.map { |i| i.unquote }.reject { |i| i.empty? }
+    arr = st.first
+    arr.last == "" ? arr[0 .. -2] : arr
   end
 end
 
