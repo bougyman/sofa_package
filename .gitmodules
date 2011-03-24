@@ -1,0 +1,3 @@
+[submodule "aur"]
+	path = aur
+	url = http://pkgbuild.com/git/aur.git
