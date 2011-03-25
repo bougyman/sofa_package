@@ -3,10 +3,20 @@ require_relative "../model/init"
 require "sofa_package/pkgbuild"
 start = ARGV[0]
 go = false
-SofaPackage::Root.join("aur/*").entries.sort.each { |dir| 
+path = SofaPackage::Root.join("aur")
+path.entries.sort.each { |name| 
+  if name.to_s =~ /^\.(?:\.|git)?$/
+    SofaPackage::Log.warn "skipping #{name.to_s}"
+    next
+  end
+  dir = path.join(name)
   go = true if start.nil? or dir.basename.to_s == start
   next unless go
   next unless dir.directory?
-  puts dir.basename
-  SofaPakcage::Pkgbuild.new(dir).write 
+  begin
+    SofaPackage::Pkgbuild.new(dir).write 
+  rescue => e
+    SofaPackage::Log.error "Wo! #{e}"
+    SofaPackage::Log.error e.backtrace.join("\n\t")
+  end
 }

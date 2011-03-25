@@ -52,13 +52,16 @@ module SofaPackage
     end
 
     def files
+      return @files if @files
       _files = []
       dir.find { |path| _files << path.expand_path if path.file? && path.to_s !~ %r{/\.} && path.basename.to_s != "PKGBUILD" }
-      _files.map { |f| f.relative_path_from(dir).to_s }
+      @files = _files.map { |f| f.relative_path_from(dir).to_s }
     end
 
     def attach_files(pkg)
+      Log.info "Adding Attachments to #{@name}" unless files.empty?
       files.each { |path| 
+        Log.info path
         id = CGI.escape(path)
         file = dir.join path
         pkg.attach(id, File.read(file), "rev" => pkg._rev, "Content-Type" => mime_type(file))
@@ -81,6 +84,7 @@ module SofaPackage
     end
 
     def parse_pkgbuild
+      Log.info "Parsing PKGBUILD for #{@name}"
       origpkg = pkgbuild.dup
       if type = mime_type(dir.join("PKGBUILD")).split(/;\s*/)[1]
         content_type = type.match(/charset=([^\s]*)/)[1].upcase

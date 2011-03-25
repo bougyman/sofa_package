@@ -1,4 +1,5 @@
 require "pathname"
+require "logger"
 module SofaPackage
   LibRoot = Pathname(__FILE__).expand_path.dirname
   unless $LOAD_PATH.include?(LibRoot)
@@ -7,4 +8,5 @@ module SofaPackage
   require "sofa_package/version"
   Root = LibRoot.join("..").expand_path
   CouchDir = Root.join("couch").expand_path
+  Log = Logger.new $stdout
 end
