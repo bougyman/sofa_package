@@ -1,0 +1,5 @@
+require_relative "../lib/sofa_package"
+require "makura"
+Makura::Model.database = "aur"
+require_relative "./package"
+require_relative "./stats"
