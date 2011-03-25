@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 require_relative "../model/init"
 require "sofa_package/pkgbuild"
+SofaPackage::Log.level = Logger::INFO
 start = ARGV[0]
 go = false
 path = SofaPackage::Root.join("aur")

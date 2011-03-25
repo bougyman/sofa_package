@@ -59,9 +59,8 @@ module SofaPackage
     end
 
     def attach_files(pkg)
-      Log.info "Adding Attachments to #{@name}" unless files.empty?
       files.each { |path| 
-        Log.info path
+        Log.debug path
         id = CGI.escape(path)
         file = dir.join path
         pkg.attach(id, File.read(file), "rev" => pkg._rev, "Content-Type" => mime_type(file))
@@ -71,10 +70,13 @@ module SofaPackage
 
     def write
       pkg = package
+      Log.info "Checking existence of #{@name}"
       if exists = Package[pkg._id]
         pkg._rev = exists._rev
       end
+      Log.info "Saving #{@name}"
       if pkg.save
+        Log.info "Adding Attachments to #{@name}" unless files.empty?
         attach_files(pkg)
       end
     end
@@ -89,7 +91,7 @@ module SofaPackage
       if type = mime_type(dir.join("PKGBUILD")).split(/;\s*/)[1]
         content_type = type.match(/charset=([^\s]*)/)[1].upcase
         unless ["UTF-8", "US-ASCII", "BINARY"].include? content_type
-          p "Converting #{@name}/PKGBUILD to UTF-8 from #{content_type}"
+          Log.info "Converting #{@name}/PKGBUILD to UTF-8 from #{content_type}"
           begin
             @pkgbuild = Iconv.new("UTF-8", content_type).conv(origpkg)
           rescue Iconv::InvalidEncoding
@@ -99,13 +101,14 @@ module SofaPackage
       end
       plains = pkgbuild.scan(/^(\w+)=([^(]*?)\s*$/)
       arrays = pkgbuild.scan(/^(\w+)=(\(.*?\))/m)
-      Hash[
-        plains.map{|a,b| [Package.varname(a), b.unquote]} + 
-        arrays.map{|a,b| [Package.varname(a), disarray(b)]}
-      ]
+      Log.info "Simple Stuff done, creating Package info"
+      plains.map! { |var, val| [Package.varname(var), val.unquote] }  
+      arrays.map! { |var, val| [Package.varname(var), disarray(val)] }
+      Hash[plains + arrays]
     end
 
     def disarray(array)
+      Log.debug "Disassembling #{array}"
       st = array.each_char.inject([[""],q=nil]) do |(s,q),chr|
         break [s,q] if chr == ')'
         if s.last.empty?
