@@ -17,8 +17,8 @@ module SofaPackage
     property :votes, :type => String
     property :comments, :type => Array
 
-    layout :all, :map => File.read(CouchDir.join("map/package_all.js")
-    layout :withdesc, :map => File.read(CouchDir.join("/couch/map/package_withdesc.js")
+    layout :all, :map => File.read(CouchDir.join("map/package_all.js"))
+    layout :withdesc, :map => File.read(CouchDir.join("map/package_withdesc.js"))
     save
   end
 end

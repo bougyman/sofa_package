@@ -3,18 +3,20 @@ require 'pathname'
 require "open-uri"
 require "mimer_plus"
 require "nokogiri"
+require_relative "../sofa_package"
+require SofaPackage::Root.join("model/init").to_s
+
+class String
+  def unquote
+    sub(/^(['"])(.*?)\1$/, '\2')
+  end
+end
 
 module SofaPackage
-  class String
-    def unquote
-      sub(/^(['"])(.*?)\1$/, '\2')
-    end
-  end
-
   class Pkgbuild
     attr_reader :dir
     def initialize(pathname)
-      @dir = pathname.expand_path
+      @dir = pathname.respond_to?(:expand_path) ? pathname.expand_path : Pathname(pathname).expand_path
       @name = @dir.basename
     end
 
@@ -75,7 +77,7 @@ module SofaPackage
     end
 
     def package
-      Package.new(parse_pkgbuild.merge(metadata).merge({_id: dir.basename, pkgbuild: pkgbuild, comments: comments, metadata: metadata}))
+      Package.new(parse_pkgbuild.merge(metadata).merge({_id: dir.basename, pkgbuild: pkgbuild, comments: comments}))
     end
 
     def parse_pkgbuild
