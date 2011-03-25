@@ -1,6 +1,3 @@
-require_relative "../lib/sofa_package"
-require 'makura'
-Makura::Model.database = "aur"
 module SofaPackage
   class Package
     include Makura::Model
