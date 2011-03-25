@@ -1,6 +1,6 @@
 
 function(doc){
-  if(doc.type === 'Package'){
+  if(doc.type === 'SofaPackage::Package'){
     emit(doc._id + ': ' + doc.pkgdesc, null)
   }
 }

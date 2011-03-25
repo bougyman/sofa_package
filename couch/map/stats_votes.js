@@ -1,6 +1,6 @@
 
 function(doc) {
-  if(doc.type === "Package" && doc.metadata) {
+  if(doc.type === "SofaPackage::Package" && doc.metadata) {
     emit(parseInt(doc.metadata["votes"]), null);
   }
 }
