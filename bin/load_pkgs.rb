@@ -4,7 +4,12 @@ require "sofa_package/pkgbuild"
 SofaPackage::Log.level = Logger::INFO
 start = ARGV[0]
 go = false
-path = SofaPackage::Root.join("aur")
+if user_path = ENV["SofaPackage_Path"]
+  path = Pathname(user_path)
+  raise "WTF? Tthat's not a valid directory." unless path.directory?
+else
+  path = SofaPackage::Root.join("aur")
+end
 path.entries.sort.each { |name| 
   if name.to_s =~ /^\.(?:\.|git)?$/
     SofaPackage::Log.warn "skipping #{name.to_s}"

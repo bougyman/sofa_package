@@ -3,6 +3,9 @@ require "makura"
 if ENV["SofaPackage_Server"]
   Makura::Model.server = ENV["SofaPackage_Server"]
 end
-Makura::Model.database = "aur"
+if ENV["SofaPackage_DB"]
+  Makura::Model.database = ENV["SofaPackage_DB"]
+end
+Makura::Model.database ||= "aur"
 require_relative "./package"
 require_relative "./stats"
